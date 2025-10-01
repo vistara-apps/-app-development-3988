@@ -6,10 +6,10 @@ import { withPaymentInterceptor, decodeXPaymentResponse } from "x402-axios";
 export function usePaymentContext() {
   const { data: walletClient, isError, isLoading } = useWalletClient();
 
-  const createPayment = useCallback(async (amount) => {
-    if (!walletClient || !walletClient.account) throw new Error("Please connect your wallet");
-    if (isError) throw new Error("Wallet not connected");
-    if (isLoading) throw new Error("Wallet is loading");
+  const createSession = useCallback(async (amount = "$0.001") => {
+    if (!walletClient || !walletClient.account) throw new Error("please connect your wallet");
+    if (isError) throw new Error("wallet not connected");
+    if (isLoading) throw new Error("wallet is loading");
     
     const baseClient = axios.create({
       baseURL: "https://payments.vistara.dev",
@@ -22,13 +22,29 @@ export function usePaymentContext() {
     const response = await apiClient.post("/api/payment", { amount });
     const paymentResponse = response.config.headers["X-PAYMENT"];
     
-    if (!paymentResponse) throw new Error("Payment response is absent");
+    if (!paymentResponse) throw new Error("payment response is absent");
     
     const decoded = decodeXPaymentResponse(paymentResponse);
-    console.log(`Payment successful: ${JSON.stringify(decoded)}`);
+    console.log(`decoded payment response: ${JSON.stringify(decoded)}`);
     
     return decoded;
   }, [walletClient, isError, isLoading]);
 
-  return { createPayment, isConnected: !!walletClient?.account };
+  const processBookingPayment = useCallback(async (packagePrice, bookingFee = 3) => {
+    const totalAmount = `$${(packagePrice + bookingFee).toFixed(2)}`;
+    return await createSession(totalAmount);
+  }, [createSession]);
+
+  const unlockGem = useCallback(async (gemPrice) => {
+    const amount = `$${gemPrice.toFixed(2)}`;
+    return await createSession(amount);
+  }, [createSession]);
+
+  return { 
+    createSession, 
+    processBookingPayment, 
+    unlockGem,
+    isWalletConnected: !!walletClient?.account,
+    isLoading 
+  };
 }

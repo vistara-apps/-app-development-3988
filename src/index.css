@@ -4,37 +4,33 @@
 
 @layer base {
   * {
-    border-color: hsl(0, 0%, 20%);
+    @apply border-border;
   }
   
   body {
-    background: hsl(0, 0%, 5%);
-    color: hsl(0, 0%, 98%);
+    @apply bg-bg text-text;
     font-family: system-ui, -apple-system, sans-serif;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary hover:bg-primaryHover text-white font-semibold py-3 px-6 rounded-xl transition-all duration-150 ease-in-out;
+    @apply bg-primary text-white px-6 py-3 rounded-md font-semibold text-sm;
+    @apply hover:bg-primaryHover transition-colors duration-150;
+    @apply active:scale-95 transform transition-transform;
   }
   
   .btn-secondary {
-    @apply bg-surface hover:bg-surfaceElevated text-text font-semibold py-3 px-6 rounded-xl border border-border transition-all duration-150 ease-in-out;
+    @apply bg-surface border border-border text-text px-6 py-3 rounded-md font-semibold text-sm;
+    @apply hover:bg-surfaceElevated transition-colors duration-150;
   }
   
   .card {
-    @apply bg-surface border border-border rounded-xl p-6 shadow-card;
+    @apply bg-surface border border-border rounded-lg p-6;
+    @apply shadow-card transition-shadow duration-250;
   }
   
-  .frame-card {
-    @apply bg-surface border border-border rounded-xl overflow-hidden shadow-elevated;
+  .card-hover {
+    @apply hover:shadow-elevated hover:scale-105 transform transition-all duration-250;
   }
-}
-
-.gradient-text {
-  background: linear-gradient(135deg, hsl(350, 89%, 60%), hsl(280, 100%, 70%));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
